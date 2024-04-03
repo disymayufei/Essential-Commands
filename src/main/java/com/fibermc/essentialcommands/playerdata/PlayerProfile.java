@@ -8,6 +8,9 @@ import java.util.Optional;
 import com.fibermc.essentialcommands.access.ServerPlayerEntityAccess;
 import com.fibermc.essentialcommands.types.IStyleProvider;
 import com.fibermc.essentialcommands.types.ProfileOption;
+
+import net.minecraft.registry.RegistryWrapper;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,7 +120,7 @@ public class PlayerProfile extends PersistentState implements IServerPlayerEntit
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.profileOptions.formattingDefault != null) {
             tag.putString(StorageKey.FORMATTING_DEAULT, ConfigUtil.serializeStyle(this.profileOptions.formattingDefault));
         }
@@ -132,7 +135,7 @@ public class PlayerProfile extends PersistentState implements IServerPlayerEntit
     }
 
     public void save() {
-        super.save(saveFile);
+        super.save(saveFile, this.player.server.getRegistryManager());
     }
 
     @Override

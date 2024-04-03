@@ -7,6 +7,9 @@ import com.fibermc.essentialcommands.commands.RulesCommand;
 import com.fibermc.essentialcommands.config.EssentialCommandsConfig;
 import com.fibermc.essentialcommands.config.EssentialCommandsConfigSnapshot;
 import com.fibermc.essentialcommands.text.ECText;
+
+import dev.jpcode.eccore.util.TextUtil;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +66,7 @@ public final class EssentialCommands implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
             ECText.init(server);
             TimeUtil.init(server);
+            TextUtil.init(server);
             managers.onServerStart(server);
             ECPerms.init(); // ECPerms must start after WorldDataManager at present (for warps).
 

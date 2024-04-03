@@ -21,6 +21,9 @@ import com.fibermc.essentialcommands.types.NamedMinecraftLocation;
 import com.fibermc.essentialcommands.util.NicknameTextUtil;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
+
+import net.minecraft.registry.RegistryWrapper;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.brigadier.context.CommandContext;
@@ -332,7 +335,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         if (dataTag.contains(StorageKey.NICKNAME)) {
             String nick = dataTag.getString(StorageKey.NICKNAME);
             if (!Objects.equals(nick, "null")) {
-                this.nickname = Text.Serialization.fromJson(nick);
+                this.nickname = Text.Serialization.fromJson(nick, player.server.getRegistryManager());
                 try {
                     reloadFullNickname();
                 } catch (NullPointerException ignore) {
@@ -356,7 +359,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.putUuid(StorageKey.PLAYER_UUID, pUuid);
 
         NbtCompound homesNbt = new NbtCompound();
@@ -364,7 +367,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         tag.put(StorageKey.HOMES, homesNbt);
 
         if (nickname != null) {
-            tag.putString(StorageKey.NICKNAME, Text.Serialization.toJsonString(nickname));
+            tag.putString(StorageKey.NICKNAME, Text.Serialization.toJsonString(nickname, wrapperLookup));
         }
 
         tag.putLong(StorageKey.TIME_USED_RTP_EPOCH_MS, TimeUtil.tickTimeToEpochMs(timeUsedRtp));
@@ -513,7 +516,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
     }
 
     public void save() {
-        super.save(saveFile);
+        super.save(saveFile, player.server.getRegistryManager());
     }
 
     public void setTimeUsedRtp(int i) {

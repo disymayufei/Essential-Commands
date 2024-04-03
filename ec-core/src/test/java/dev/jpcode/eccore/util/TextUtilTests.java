@@ -39,8 +39,8 @@ public class TextUtilTests {
     @DisplayName("from-to json is remotely sane")
     void fromToJson_isSane()
     {
-        var nullJsonStr = Text.Serialization.toJsonString(Text.literal(" hi there! "));
-        var parsedStyleFromNull = Text.Serialization.fromJson(nullJsonStr);
+        var nullJsonStr = Text.Serialization.toJsonString(Text.literal(" hi there! "), TextUtil.getWrapperLookup());
+        var parsedStyleFromNull = Text.Serialization.fromJson(nullJsonStr, TextUtil.getWrapperLookup());
 
         assert parsedStyleFromNull == null;
     }

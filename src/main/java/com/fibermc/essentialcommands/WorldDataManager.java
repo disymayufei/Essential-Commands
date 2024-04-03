@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 import com.fibermc.essentialcommands.types.MinecraftLocation;
 import com.fibermc.essentialcommands.types.WarpLocation;
 import com.fibermc.essentialcommands.types.WarpStorage;
+
+import net.minecraft.registry.RegistryWrapper;
+
 import org.apache.logging.log4j.Level;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -35,6 +38,7 @@ public class WorldDataManager extends PersistentState {
     private MinecraftLocation spawnLocation;
     private Path saveDir;
     private File worldDataFile;
+    private MinecraftServer server;
 
     private static final String SPAWN_KEY = "spawn";
     private static final String WARPS_KEY = "warps";
@@ -52,6 +56,7 @@ public class WorldDataManager extends PersistentState {
     }
 
     public void onServerStart(MinecraftServer server) {
+        this.server = server;
         this.saveDir = server.getSavePath(WorldSavePath.ROOT).resolve("essentialcommands");
         try {
             Files.createDirectories(saveDir);
@@ -102,12 +107,12 @@ public class WorldDataManager extends PersistentState {
 
     public void save() {
         EssentialCommands.log(Level.INFO, "Saving world_data.dat (Spawn/Warps)...");
-        super.save(this.worldDataFile);
+        super.save(this.worldDataFile, server.getRegistryManager());
         EssentialCommands.log(Level.INFO, "world_data.dat saved.");
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         // Spawn to NBT
         NbtElement spawnNbt = spawnLocation != null
             ? spawnLocation.asNbt()

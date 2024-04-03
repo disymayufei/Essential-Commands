@@ -1,10 +1,14 @@
 package com.fibermc.essentialcommands.mixin;
 
 import com.fibermc.essentialcommands.playerdata.PlayerDataManager;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+
+import com.mojang.authlib.properties.Property;
+
+import com.mojang.authlib.properties.PropertyMap;
+
+import net.minecraft.network.PacketByteBuf;
+
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,11 +39,28 @@ public class PlayerListS2CPacketActionMixin {
                 var displayName = PlayerDataManager.getInstance().getByUuid(id).getPlayer().getDisplayName();
                 var displayNameString = displayName.asTruncatedString(16);
                 buf.writeString(displayNameString, 16);
-                buf.writePropertyMap(entry.profile().getProperties());
+                writePropertyMap(buf, entry.profile().getProperties());
             } else {
                 vanillaWriter.write(buf, entry);
             }
         };
 
+    }
+
+    @Unique
+    private void writePropertyMap(PacketByteBuf buf, PropertyMap propertyMap) {
+        buf.writeCollection(propertyMap.values(), this::writeProperty);
+    }
+
+    @Unique
+    private void writeProperty(PacketByteBuf buf, Property property) {
+        buf.writeString(property.name());
+        buf.writeString(property.value());
+        if (property.hasSignature()) {
+            buf.writeBoolean(true);
+            buf.writeString(property.signature());
+        } else {
+            buf.writeBoolean(false);
+        }
     }
 }

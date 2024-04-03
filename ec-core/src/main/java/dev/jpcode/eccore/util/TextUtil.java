@@ -9,6 +9,10 @@ import java.util.stream.Collector;
 
 import com.google.gson.JsonParseException;
 import eu.pb4.placeholders.api.TextParserUtils;
+
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.MinecraftServer;
+
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.text.*;
@@ -17,6 +21,16 @@ import dev.jpcode.eccore.ECCore;
 
 public final class TextUtil {
     private TextUtil() {}
+
+    private static MinecraftServer server;
+
+    public static void init(MinecraftServer server) {
+        TextUtil.server = server;
+    }
+
+    public static RegistryWrapper.WrapperLookup getWrapperLookup() {
+        return server.getRegistryManager();
+    }
 
     public static MutableText concat(Text... arr) {
         MutableText out = Text.empty();
@@ -187,7 +201,7 @@ public final class TextUtil {
     }
 
     static {
-        registerTextParser(Text.Serialization::fromJson);
+        registerTextParser(str -> Text.Serialization.fromJson(str, server.getRegistryManager()));
         int javaVersion = Util.getJavaVersion();
         if (javaVersion >= 16) {
             ECCore.LOGGER.log(Level.INFO, String.format(

@@ -294,11 +294,11 @@ public final class EssentialCommandRegistry {
             Predicate<ServerCommandSource> permissionSelf = ECPerms.require(ECPerms.Registry.nickname_self, 2);
             Predicate<ServerCommandSource> permissionOther = ECPerms.require(ECPerms.Registry.nickname_others, 2);
             nickSetBuilder.requires(permissionSelf)
-                .then(argument("nickname", TextArgumentType.text())
+                .then(argument("nickname", TextArgumentType.text(commandRegistryAccess))
                     .executes(new NicknameSetCommand())
                 ).then(CommandUtil.targetPlayerArgument()
                     .requires(permissionOther)
-                    .then(argument("nickname", TextArgumentType.text())
+                    .then(argument("nickname", TextArgumentType.text(commandRegistryAccess))
                         .executes(new NicknameSetCommand())
                     ).then(argument("nickname_placeholder_api", StringArgumentType.greedyString())
                         .executes(NicknameSetCommand::runStringToText)

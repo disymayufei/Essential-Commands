@@ -3,6 +3,7 @@ package com.fibermc.essentialcommands.commands;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fibermc.essentialcommands.ManagerLocator;
@@ -75,7 +76,7 @@ public class HomeTeleportOtherCommand extends HomeCommand implements Command<Ser
                     context.getSource().sendError(ECText.access(senderPlayerData.getPlayer()).error(e.getMessage()));
                 }
             });
-        return 1;
+        return SINGLE_SUCCESS;
 
     }
 
@@ -96,6 +97,7 @@ public class HomeTeleportOtherCommand extends HomeCommand implements Command<Ser
                     ECText.getInstance().getString("cmd.home.list.start"),
                     "home tp_offline %s".formatted(targetPlayerName),
                     targetPlayerData.getHomeEntries(),
+                    Entry::getKey,
                     senderPlayerProfile
                 );
 

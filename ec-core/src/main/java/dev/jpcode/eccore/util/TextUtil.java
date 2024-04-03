@@ -187,7 +187,7 @@ public final class TextUtil {
     }
 
     static {
-        registerTextParser(Text.Serializer::fromJson);
+        registerTextParser(Text.Serialization::fromJson);
         int javaVersion = Util.getJavaVersion();
         if (javaVersion >= 16) {
             ECCore.LOGGER.log(Level.INFO, String.format(
@@ -211,14 +211,15 @@ public final class TextUtil {
             try {
                 outText = parser.parseText(textStr);
             } catch (JsonParseException e) {
-                ECCore.LOGGER.log(Level.INFO, String.format("Failed to parse string '%s' as MinecraftText, trying Fabric Placeholder API...", textStr));
+                // ign
             }
 
             if (outText != null) {
-                break;
+                return outText;
             }
         }
-        return outText;
+
+        throw new RuntimeException(String.format("Failed to parse string '%s' as MinecraftText using any parsing strategy", textStr));
     }
 
     public static Collector<Text, MutableText, MutableText> collect() {
@@ -260,14 +261,14 @@ public final class TextUtil {
      */
     public static List<Text> flattenRoot(Text text) {
         var siblings = text.getSiblings();
-        if (text.getContent().equals(TextContent.EMPTY) && siblings.size() == 1) {
+        if (text.getContent().equals(PlainTextContent.EMPTY) && siblings.size() == 1) {
             return siblings;
         } else if (siblings.size() == 0) {
             return List.of(text);
         }
 
         List<Text> content = new ArrayList<>(siblings.size() + 1);
-        if (!text.getContent().equals(TextContent.EMPTY)) {
+        if (!text.getContent().equals(PlainTextContent.EMPTY)) {
             content.add(text.copyContentOnly().setStyle(text.getStyle()));
         }
         content.addAll(siblings);

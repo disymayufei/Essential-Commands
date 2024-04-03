@@ -14,7 +14,9 @@
   "cmd.home.set.feedback": "已设置家 \"${0}\" 。",
   "cmd.home.set.error.limit": "无法设置家 \"${0}\" 。原因：已达到家的可设置上限(${1})。",
   "cmd.home.set.error.exists": "无法设置家 \"${0}\" 。原因：已有一个相同名称的家。",
+  "cmd.home.set.overwrite": "名为 \"${0}\" 的家已存在，\n你想覆盖现有的家吗？",
   "cmd.home.list.start": "当前已设置的家： ",
+  "cmd.overwritehome.feedback": "家 \"${0}\" 已更改至当前位置。",
   "cmd.nickname.set.feedback": "已将昵称设为 \"${0}\" 。",
   "cmd.nickname.set.error": "无法将昵称设置为 \"${0}\" 。原因： ${1}",
   "cmd.nickname.set.error.perms": "你没有设置昵称的权限。",
@@ -63,7 +65,7 @@
   "player.afk.enter": "${0} 暂时离开了。",
   "player.afk.exit": "${0} 回来了。",
 
-  "teleport.error.interdimensional_teleport_disabled": "传送失败。原因：跨纬度传送已被禁止。",
+  "teleport.error.interdimensional_teleport_disabled": "传送失败。原因：跨维度传送已被禁止。",
   "teleport.queued": "将在 ${1} 秒内传送至 ${0} ...",
   "teleport.done": "已传送至 ${0} 。",
   "teleport.interrupted.damage": "传送中断。原因：受到伤害。",
@@ -84,9 +86,9 @@
   "essentialcommands.smallprefix": "[EC] ",
   "cmd.config.reload": "${l:essentialcommands.fullprefix} 已重新加载配置。",
 
-  "rules.reload.success": "Rules file reloaded.",
-  "cmd.rules.reload.error.unexpected": "An unexpected error occurred while reloading the rules file. The server console may contain more information.",
-  "cmd.bed.error.none_set": "Player spawnpoint not set.",
-  "cmd.bed.bed_destination_name": "bed"
+  "rules.reload.success": "已重新加载规则文件",
+  "cmd.rules.reload.error.unexpected": "重新加载规则文件时出现未知错误，请检查服务器控制台。",
+  "cmd.bed.error.none_set": "玩家重生点未设置。",
+  "cmd.bed.bed_destination_name": "床"
 
 }

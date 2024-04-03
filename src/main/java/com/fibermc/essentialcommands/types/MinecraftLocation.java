@@ -38,6 +38,13 @@ public class MinecraftLocation {
         this.pitch = pitch;
     }
 
+    public MinecraftLocation(RegistryKey<World> dim, Vec3i vec3i, float headYaw, float pitch) {
+        this.dim = dim;
+        this.pos = Vec3d.ofCenter(vec3i);
+        this.headYaw = headYaw;
+        this.pitch = pitch;
+    }
+
     public MinecraftLocation(ServerPlayerEntity player) {
         this.dim = player.getWorld().getRegistryKey();
         this.pos = Vec3d.ZERO.add(player.getPos());
@@ -106,6 +113,7 @@ public class MinecraftLocation {
     public Vec3d pos() {
         return pos;
     }
+
     public Vec3i intPos() {
         return new Vec3i((int) pos.x, (int) pos.y, (int) pos.z);
     }

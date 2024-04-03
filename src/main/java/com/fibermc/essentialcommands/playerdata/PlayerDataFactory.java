@@ -1,9 +1,9 @@
 package com.fibermc.essentialcommands.playerdata;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 import com.fibermc.essentialcommands.EssentialCommands;
@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtSizeTracker;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public final class PlayerDataFactory {
@@ -31,7 +33,7 @@ public final class PlayerDataFactory {
 
         if (fileExisted && playerDataFile.length() != 0) {
             try {
-                pData.fromNbt(NbtIo.readCompressed(new FileInputStream(playerDataFile)));
+                pData.fromNbt(NbtIo.readCompressed(playerDataFile.toPath(), NbtSizeTracker.ofUnlimitedBytes()));
             } catch (IOException e) {
                 EssentialCommands.log(Level.WARN,
                     "Failed to load essential_commands player data for {%s}", player.getName().getString());
@@ -54,7 +56,7 @@ public final class PlayerDataFactory {
         PlayerData pData = new PlayerData(playerUuid, saveFile);
         if (Files.exists(saveFile.toPath()) && saveFile.length() != 0) {
             try {
-                NbtCompound nbtCompound3 = NbtIo.readCompressed(new FileInputStream(saveFile));
+                NbtCompound nbtCompound3 = NbtIo.readCompressed(saveFile.toPath(), NbtSizeTracker.ofUnlimitedBytes());
                 pData.fromNbt(nbtCompound3);
                 // If a EC data already existed, the homes we just initialized the pData with (from paramater) just got overwritten.
                 // Now, add them back if their keys do not already exist in the set we just loaded from EC save file.
@@ -92,8 +94,12 @@ public final class PlayerDataFactory {
         return new PlayerData(player, null);
     }
 
+    public static Path getPlayerDataDirectoryPath(MinecraftServer server) throws IOException {
+        return FileUtil.getOrCreateWorldDirectory(server, "modplayerdata");
+    }
+
     private static File getPlayerDataFile(ServerPlayerEntity player) throws IOException {
-        return FileUtil.getOrCreateWorldDirectory(player.getServer(), "modplayerdata")
+        return getPlayerDataDirectoryPath(player.getServer())
             .resolve(player.getUuidAsString() + ".dat")
             .toFile();
     }

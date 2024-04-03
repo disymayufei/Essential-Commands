@@ -29,11 +29,12 @@ public class TeleportAskHereCommand implements Command<ServerCommandSource> {
 
         // Don't allow spamming same target.
         {
-            var existingTeleportRequest = senderPlayerData.getSentTeleportRequest();
-            if (existingTeleportRequest != null && existingTeleportRequest.getTargetPlayer().equals(targetPlayer)) {
+            var existingTeleportRequest = senderPlayerData.getSentTeleportRequests()
+                .getRequestToPlayer(targetPlayerData);
+            if (existingTeleportRequest.isPresent()) {
                 PlayerData.access(senderPlayer).sendCommandError(
                     "cmd.tpask.error.exists",
-                    existingTeleportRequest.getTargetPlayer().getDisplayName());
+                    existingTeleportRequest.get().getTargetPlayer().getDisplayName());
                 return 0;
             }
         }
@@ -42,7 +43,7 @@ public class TeleportAskHereCommand implements Command<ServerCommandSource> {
         var targetPlayerEcText = ECText.access(targetPlayer);
         targetPlayerData.sendMessage(
             "cmd.tpaskhere.receive",
-            targetPlayerEcText.accent(senderPlayer.getEntityName())
+            targetPlayerEcText.accent(senderPlayer.getNameForScoreboard())
         );
 
         String senderName = senderPlayer.getGameProfile().getName();
@@ -58,9 +59,9 @@ public class TeleportAskHereCommand implements Command<ServerCommandSource> {
         tpMgr.startTpRequest(senderPlayer, targetPlayer, TeleportRequest.Type.TPA_HERE);
 
         //inform command sender that request has been sent
-        var targetPlayerText = ECText.access(senderPlayer).accent(targetPlayer.getEntityName());
+        var targetPlayerText = ECText.access(senderPlayer).accent(targetPlayer.getNameForScoreboard());
         senderPlayerData.sendCommandFeedback("cmd.tpask.send", targetPlayerText);
 
-        return 1;
+        return SINGLE_SUCCESS;
     }
 }
